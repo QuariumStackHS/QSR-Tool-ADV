@@ -6,6 +6,27 @@
 
 
 //user definable Function
+
+class Value{
+    public:
+        Value(string value){
+            this->S_V=value;
+
+        }
+        Value(int value){
+            this->I_V=value;
+
+        }
+        Value(float value){
+            this->F_V=value;
+
+        }
+
+    string S_V;
+    int I_V;
+    float F_V;
+    
+    };
 class UD_Function{
     public:
         UD_Function(string Fname,int Bl,int El){
@@ -13,7 +34,7 @@ class UD_Function{
             this->BeginLine=Bl;
             this->EndLine=El;
         }
-        
+
         string FuncName;
         
         int BeginLine;

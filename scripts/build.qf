@@ -1,9 +1,0 @@
-begin:
-/* compile objs */
-var Module Main
-compile Module
-
-link
-end;
-
-

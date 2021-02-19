@@ -1,9 +1,18 @@
 Begin:
 
+
+/* update App */
 func update as:
-App-RCP
+    App-RCP
+end;
+/* Generate Apps */
+func Gen_Apps as:
+    import Generator
+    Gen_Help
 end;
 
 
 call update
+
+call Gen_Apps
 exit

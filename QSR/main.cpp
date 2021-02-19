@@ -63,7 +63,7 @@ size_t split(const std::string &txt, std::vector<std::string> &strs, char ch)
 }
 Helper::Helper(Argser *HTL)
 {
-    cout << "help" << endl;
+    //cout << "help" << endl;
     string Module = HTL->argv[HTL->charstr + 1];
     if (strcmp(Module.c_str(), "Base") == 0)
     {
@@ -131,7 +131,8 @@ Helper::Helper(Argser *HTL)
         cout << BOLDCYAN << "─";
     }
     cout << "┘" << endl;
-    exit(0);
+    HTL->charstr++;
+    //exit(0);
 }
 int Argser::GetInsL(int Ins)
 {
@@ -474,6 +475,7 @@ void *add(Argser *In){
 int Argser::Parse()
 {
     int first_ins = 1;
+    //while True until there is no more argv to exeute
     while (charstr < this->argv.size())
     {
 
@@ -483,6 +485,7 @@ int Argser::Parse()
         //if ()
         if (this->try_task(getcurrentIns()))
         {
+            //execution would be there if it was executing a func, if it was not encounter it will return 0 so would continue in the if else statement
         }
         else if (strcmp(getcurrentIns().c_str(), "dump") == 0)
         {
@@ -600,7 +603,8 @@ void *Export(Argser *IN)
 void *import_Module(Argser *IN)
 {
     string N = IN->getnextIns();
-    cout << N << endl;
+    int didran=0;
+    //cout << N << endl;
     for (int i = 0; i < IN->QS.size(); i++)
     {
 
@@ -609,9 +613,14 @@ void *import_Module(Argser *IN)
             for (int j = 0; j < IN->QS[i].__Tasks.size(); j++)
             {
                 IN->__Tasks.push_back(IN->QS[i].__Tasks[j]);
+                didran=1;
             }
-            cout << "Module: " << N << " imported" << endl;
+            //cout << "Module: " << N << " imported" << endl;
         }
+
+    }
+    if (!didran){
+        cout<<RED<<"ERROR can't import module named: \""<<N<<"\""<<endl;
     }
 
     //IN->add_Cask();
