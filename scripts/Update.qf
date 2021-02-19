@@ -1,2 +1,13 @@
 Begin:
+
+func update as begin:
 App-RCP
+end;
+
+func compiler as begin:
+compile Main
+link
+end;
+call compiler
+
+call update

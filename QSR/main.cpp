@@ -6,23 +6,31 @@
 
 #include <dirent.h>
 
-using std::cout; using std::cin;
-using std::endl; using std::vector;
+using std::cin;
+using std::cout;
+using std::endl;
+using std::vector;
 /*
 Args parser, analyze and execute
 */
-vector<string> list_dir(string dird){
-    DIR *dir; struct dirent *diread;
+vector<string> list_dir(string dird)
+{
+    DIR *dir;
+    struct dirent *diread;
     vector<string> files;
-    dir=dir = opendir(dird.c_str());
-    if (dir != nullptr) {
-        while ((diread = readdir(dir)) != nullptr) {
+    dir = dir = opendir(dird.c_str());
+    if (dir != nullptr)
+    {
+        while ((diread = readdir(dir)) != nullptr)
+        {
             files.push_back(diread->d_name);
         }
-        closedir (dir);
-    } else {
-        perror ("opendir");
-       //return 0;
+        closedir(dir);
+    }
+    else
+    {
+        perror("opendir");
+        //return 0;
     }
     return files;
     //for (auto file : files) cout << file << "| ";
@@ -55,7 +63,7 @@ size_t split(const std::string &txt, std::vector<std::string> &strs, char ch)
 }
 Helper::Helper(Argser *HTL)
 {
-    cout<<"help"<<endl;
+    cout << "help" << endl;
     string Module = HTL->argv[HTL->charstr + 1];
     if (strcmp(Module.c_str(), "Base") == 0)
     {
@@ -129,12 +137,16 @@ int Argser::GetInsL(int Ins)
 {
     return this->lines[Ins];
 }
-int Argser::newFunc(string funcName, string funcCode)
-{
 
-    this->FuncName.push_back(funcName);
-    this->FuncCode.push_back(funcCode);
-    //this->Func
+int Argser::newFunc(string funcName, int line, int endline)
+{
+    UD_Function F = UD_Function(funcName, line, endline);
+    this->Functions.push_back(F);
+    /*this->FuncName.push_back(funcName);
+    //this->FuncStackP.push_back(StackP);
+    this->End_line.push_back(endline);
+    this->Begin_Line.push_back(line);
+    //this->Func*/
     //this->FuncSrc.push_back(funcSrc);
     //cout<<"attempting to Create function: "<<funcName<<" | "<<funcCode<<endl;
     this->NextFNCID++;
@@ -145,19 +157,24 @@ int Argser::executeFunc(string tFuncName)
 {
     for (int i = 0; i < this->NextFNCID; i++)
     {
-        if (strcmp(tFuncName.c_str(), this->FuncName[i].c_str()) == 0)
+        if (strcmp(tFuncName.c_str(), this->Functions[i].FuncName.c_str()) == 0)
         {
-            std::__1::vector<std::__1::string>::iterator it = this->argv.begin();
-            vector<string> Ins;
-            split(this->FuncCode[i], Ins, ' ');
+            int oldCharstr = this->charstr;
+            this->charstr = this->charstr = this->Functions[i].BeginLine;
+            this->Parse();
+            this->charstr = oldCharstr;
 
-            for (int j = 2; j < Ins.size(); j++)
-            {
-                this->argc++;
-                this->argv.insert(it + charstr + j, Ins[j]);
-                vector<int>::iterator itL = this->lines.begin();
-                this->lines.insert(itL + charstr + j, 0);
-            }
+            //std::__1::vector<std::__1::string>::iterator it = this->argv.begin();
+            //vector<string> Ins;
+            //split(this->FuncCode[i], Ins, ' ');
+
+            //for (int j = 2; j < Ins.size(); j++)
+            //{
+            //this->argc++;
+            //this->argv.insert(it + charstr + j, Ins[j]);
+            //vector<int>::iterator itL = this->lines.begin();
+            //this->lines.insert(itL + charstr + j, 0);
+            //}
         }
     }
     return 0;
@@ -356,7 +373,7 @@ void *Compile(Argser *In)
     string Cmd03 = " -c -o Build/obj/";
     string Cmd = Cmd01.append(Cmd02);
     string Cmd1 = Cmd.append(Cmd03);
-    replace( Cmd02.begin(), Cmd02.end(), '/', '.');
+    replace(Cmd02.begin(), Cmd02.end(), '/', '.');
     string Cmd2 = Cmd1.append(Cmd02);
     string Cmd3 = Cmd2.append(".QSRobj -Iincludes -std=c++");
     string Cmd04 = to_string(In->Cfg.CPPLang);
@@ -415,13 +432,9 @@ int Argser::import()
 }
 int Argser::Parse()
 {
-int first_ins=1;
+    int first_ins = 1;
     while (charstr < this->argc)
     {
-        
-        
-        
-
 
         charstr++;
 
@@ -502,7 +515,6 @@ int first_ins=1;
         }
         else if (strcmp(getcurrentIns().c_str(), "add") == 0)
         {
-            
 
             string Cmd00 = "mkdir src/";
             string Cmd01 = getVar(getnextIns());
@@ -512,23 +524,29 @@ int first_ins=1;
             string Cmd04 = getVar(getcurrentIns());
             string Cmd05 = Cmd03.append(Cmd04);
             system(Cmd05.c_str());
-              ofstream myfile;
-              myfile.open((string)"Private/Regen.qf",std::ios_base::app);
-                myfile<<"\n/* Regen: */\nadd "<< Cmd04<<"\n";
+            ofstream myfile;
+            myfile.open((string) "Private/Regen.qf", std::ios_base::app);
+            myfile << "\n/* Regen: */\nadd " << Cmd04 << "\n";
 
-                myfile.open(((string)"scripts/").append(RED).append(Cmd04.append(".qf")));
-                myfile << "Begin: \nvar Module "<<Cmd01<<"\ncompile Module"<<"\n";
-                myfile.close();
+            myfile.open(((string) "scripts/").append(RED).append(Cmd04.append(".qf")));
+            myfile << "Begin: \nvar Module " << Cmd01 << "\ncompile Module"
+                   << "\n";
+            myfile.close();
 
-                myfile.open(((string)"scripts/Compile_").append(this->Cfg.ProgrameName), std::ios_base::app);
-                myfile << "/* Compile Module: "<<this->Cfg.ProgrameName<<"."<<Cmd01<<" */ \nvar Module "<<Cmd01<<"\ncompile Module"<<"\n";
-                myfile.close();
+            myfile.open(((string) "scripts/Compile_").append(this->Cfg.ProgrameName), std::ios_base::app);
+            myfile << "/* Compile Module: " << this->Cfg.ProgrameName << "." << Cmd01 << " */ \nvar Module " << Cmd01 << "\ncompile Module"
+                   << "\n";
+            myfile.close();
             //create files and folders for dir
 
             /*
         
         
         */
+        }
+        else if (strcmp(getcurrentIns().c_str(), "end;") == 0)
+        {
+            return charstr;
         }
         else if (strcmp(getcurrentIns().c_str(), "pause") == 0)
         {
@@ -582,9 +600,9 @@ int first_ins=1;
         {
             bool isexist = 0;
             //cout<<this->FuncName.size()<<endl;
-            for (int i = 0; i < this->FuncName.size(); i++)
+            for (int i = 0; i < this->Functions.size(); i++)
             {
-                if (strcmp(this->FuncName[i].c_str(), getcurrentIns().c_str()) == 0)
+                if (strcmp(this->Functions[i].FuncName.c_str(), getcurrentIns().c_str()) == 0)
                 {
                     isexist = 1;
                 }
@@ -593,9 +611,8 @@ int first_ins=1;
             {
                 cout << "Unknown Instruction: \"" << getcurrentIns() << "\"  at: " << GetInsL(charstr) << ":" << charstr << endl;
             }
-
         }
-        first_ins=0;
+        first_ins = 0;
         //cout<<getVar(getcurrentIns())<<endl;
         //cout<<"isvar??"<<getcurrentIns()<<"->"<<(strcmp(getVar(getcurrentIns()).c_str(),"Null") == 1)<<endl;
     }
@@ -613,9 +630,9 @@ void *Call(Argser *IN)
 {
     bool isexist = 0;
     //cout<<this->FuncName.size()<<endl;
-    for (int i = 0; i < IN->FuncName.size(); i++)
+    for (int i = 0; i < IN->Functions.size(); i++)
     {
-        if (strcmp(IN->FuncName[i].c_str(), IN->argv[IN->charstr + 1].c_str()) == 0)
+        if (strcmp(IN->Functions[i].FuncName.c_str(), IN->argv[IN->charstr + 1].c_str()) == 0)
         {
             isexist = 1;
         }
@@ -642,7 +659,7 @@ void *Var(Argser *IN)
     IN->newVar(IN->getnextIns(), IN->argv[VarI + 1]);
     if (IN->Cfg.debug)
     {
-        cout << "DEBUG: new variable named: \"" << IN->getcurrentIns() << "\" with value: " << IN->argv[VarI+1] << endl;
+        cout << "DEBUG: new variable named: \"" << IN->getcurrentIns() << "\" with value: " << IN->argv[VarI + 1] << endl;
         //if()
     }
     IN->charstr++;
@@ -673,9 +690,10 @@ void *func(Argser *IN)
 {
     IN->charstr++;
     string FucName = IN->getcurrentIns();
+    int beginline = IN->charstr + 1;
     //cout<<"Adding Func name: "<<FucName<<endl;
     string FncCode;
-    bool EndOFFunc = 0;
+    int EndOFFunc = 0;
     while (!EndOFFunc)
     {
         IN->charstr++;
@@ -683,7 +701,7 @@ void *func(Argser *IN)
         string InStr = IN->getcurrentIns();
         if (strcmp(InStr.c_str(), "end;") == 0)
         {
-            EndOFFunc = 1;
+            EndOFFunc = IN->charstr;
         }
         else
         {
@@ -692,7 +710,7 @@ void *func(Argser *IN)
         }
     }
 
-    IN->newFunc(FucName, FncCode);
+    IN->newFunc(FucName, beginline, EndOFFunc);
     //cout << "analized Func properly" << endl;
     //charstr--;
 }
@@ -714,9 +732,7 @@ int Argser::init_Func()
     add_Cask("call", "[Func]", &Call);
     add_Cask("-help", "[module]", &HelperI);
 
-    
     Init_Modules(this);
-    
 
     return 0;
 }

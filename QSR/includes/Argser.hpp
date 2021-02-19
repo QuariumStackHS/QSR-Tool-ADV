@@ -5,13 +5,30 @@
 #include <fstream> // std::fstream
 
 
+//user definable Function
+class UD_Function{
+    public:
+        UD_Function(string Fname,int Bl,int El){
+            this->FuncName=Fname;
+            this->BeginLine=Bl;
+            this->EndLine=El;
+        }
+        string FuncName;
+        
+        int BeginLine;
+        int EndLine;
+
+};
+
 
 class Argser
 {
 public:
+vector<UD_Function>Functions;
+int StackPointer=0;
 Argser(int argc, char **argv)
 {
-
+    
     this->argc = argc;
     for (int i = 0; i < argc; i++)
     {
@@ -148,7 +165,7 @@ Argser(int argc, char **argv)
     //int Link();
     int executeFunc(string);
     //int Run();
-    int newFunc(string, string);
+    int newFunc(string, int,int);
     int import();
     string getnextIns();
     vector<string> vars;
@@ -156,8 +173,12 @@ Argser(int argc, char **argv)
 
     //2d xyz, x=func, y=code z=call
     int NextFNCID = 0;
-    vector<string> FuncName;
-    vector<string> FuncCode;
+
+    /*vector<string> FuncName;
+    vector<int> FuncStackP;
+
+    vector<int> Begin_Line;
+    vector<int> End_line;*/
     //vector<std::string> vardata;
     Configurator Cfg;
     int argc;
