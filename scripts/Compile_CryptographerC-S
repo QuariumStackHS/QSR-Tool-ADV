@@ -1,0 +1,5 @@
+begin:
+
+var Module Main/main.cpp
+compile Module
+
