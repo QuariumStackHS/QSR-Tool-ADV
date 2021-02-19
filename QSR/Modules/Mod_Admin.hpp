@@ -7,6 +7,8 @@ Administrate Modules includes and binary
 */
 
 void* Admin(Argser* IN){
+    //IN->getnextIns
+    
     cout<<"Console Admin"<<endl;
     cout<<""<<endl;
 }

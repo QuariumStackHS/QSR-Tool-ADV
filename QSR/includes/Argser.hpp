@@ -13,6 +13,7 @@ class UD_Function{
             this->BeginLine=Bl;
             this->EndLine=El;
         }
+        
         string FuncName;
         
         int BeginLine;

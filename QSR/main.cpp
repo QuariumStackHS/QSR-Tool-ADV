@@ -137,7 +137,6 @@ int Argser::GetInsL(int Ins)
 {
     return this->lines[Ins];
 }
-
 int Argser::newFunc(string funcName, int line, int endline)
 {
     UD_Function F = UD_Function(funcName, line, endline);
@@ -349,7 +348,7 @@ void *Update(Argser *IN)
             cout << BOLDRED "Error while Compiling QSR With Return code: " << i / 256 << RESET << endl;
         }
 
-        exit(0);
+        //exit(0);
     }
 
     else if ((strcmp(IN->getcurrentIns().c_str(), "App-RUP") == 0))
@@ -360,7 +359,7 @@ void *Update(Argser *IN)
         cout << "\tUpdating configuration.." << endl;
         cout << "\tCompiling QSR With Return code: " << i / 256 << endl;
 
-        exit(0);
+        //exit(0);
     }
     //return 1;
 }
@@ -430,10 +429,52 @@ int Argser::import()
 
     return 0;
 }
+void *Init(Argser * In){
+    system("mkdir Src");
+    //string SKN = getVar(getnextIns());
+
+    system("mkdir includes");
+    system("mkdir Build");
+    system("mkdir Build/obj");
+    system("mkdir Build/exe");
+    system("mkdir scripts");
+    system("mkdir Private");
+}
+void *Exit(Argser * In){
+    cout << "---Exiting!---" << endl;
+    exit(0);
+}
+void *QF(Argser * In){
+        In->charstr++;
+        In->runfile();
+}
+void *add(Argser *In){
+    string Cmd00 = "mkdir src/";
+    string Cmd01 = In->getVar(In->getnextIns());
+    string Cmd02 = Cmd00.append(Cmd01);
+    system(Cmd02.c_str());
+    string Cmd03 = "mkdir includes/";
+    string Cmd04 = In->getVar(In->getcurrentIns());
+    string Cmd05 = Cmd03.append(Cmd04);
+    system(Cmd05.c_str());
+    ofstream myfile;
+    myfile.open((string) "Private/Regen.qf", std::ios_base::app);
+    myfile << "\n/* Regen: */\nadd " << Cmd04 << "\n";
+
+    myfile.open(((string) "scripts/").append(RED).append(Cmd04.append(".qf")));
+    myfile << "Begin: \nvar Module " << Cmd01 << "\ncompile Module"
+            << "\n";
+    myfile.close();
+
+    myfile.open(((string) "scripts/Compile_").append(In->Cfg.ProgrameName), std::ios_base::app);
+    myfile << "/* Compile Module: " << In->Cfg.ProgrameName << "." << Cmd01 << " */ \nvar Module " << Cmd01 << "\ncompile Module"
+            << "\n";
+    myfile.close();
+}
 int Argser::Parse()
 {
     int first_ins = 1;
-    while (charstr < this->argc)
+    while (charstr < this->argv.size())
     {
 
         charstr++;
@@ -443,39 +484,6 @@ int Argser::Parse()
         if (this->try_task(getcurrentIns()))
         {
         }
-        else if (strcmp(getcurrentIns().c_str(), "init") == 0)
-        {
-            system("mkdir Src");
-            //string SKN = getVar(getnextIns());
-
-            system("mkdir includes");
-            system("mkdir Build");
-            system("mkdir Build/obj");
-            system("mkdir Build/exe");
-            system("mkdir scripts");
-            system("mkdir Private");
-        }
-        else if (strcmp(getcurrentIns().c_str(), "import") == 0)
-        {
-            import();
-        }
-        else if (strcmp(getcurrentIns().c_str(), "exit") == 0)
-        {
-            cout << "---Exiting!---" << endl;
-            exit(0);
-        }
-        else if (strcmp(getcurrentIns().c_str(), "Admin") == 0)
-        {
-            //Frame ad = Frame();
-            //ad.setChar(3,3,'p');
-            //ad.draw();
-        }
-        else if (strcmp(getcurrentIns().c_str(), "-QF") == 0)
-        {
-            charstr++;
-            runfile();
-        }
-
         else if (strcmp(getcurrentIns().c_str(), "dump") == 0)
         {
             cout << CYAN << "Address\t" << GREEN << "instruction" << endl;
@@ -503,47 +511,6 @@ int Argser::Parse()
                 lastL = L;
             }
         }
-        else if (strcmp(getcurrentIns().c_str(), "run") == 0)
-        {
-        }
-        else if (strcmp(getcurrentIns().c_str(), "del") == 0)
-        {
-            //charstr++;
-        }
-        else if (strcmp(getcurrentIns().c_str(), "var") == 0)
-        {
-        }
-        else if (strcmp(getcurrentIns().c_str(), "add") == 0)
-        {
-
-            string Cmd00 = "mkdir src/";
-            string Cmd01 = getVar(getnextIns());
-            string Cmd02 = Cmd00.append(Cmd01);
-            system(Cmd02.c_str());
-            string Cmd03 = "mkdir includes/";
-            string Cmd04 = getVar(getcurrentIns());
-            string Cmd05 = Cmd03.append(Cmd04);
-            system(Cmd05.c_str());
-            ofstream myfile;
-            myfile.open((string) "Private/Regen.qf", std::ios_base::app);
-            myfile << "\n/* Regen: */\nadd " << Cmd04 << "\n";
-
-            myfile.open(((string) "scripts/").append(RED).append(Cmd04.append(".qf")));
-            myfile << "Begin: \nvar Module " << Cmd01 << "\ncompile Module"
-                   << "\n";
-            myfile.close();
-
-            myfile.open(((string) "scripts/Compile_").append(this->Cfg.ProgrameName), std::ios_base::app);
-            myfile << "/* Compile Module: " << this->Cfg.ProgrameName << "." << Cmd01 << " */ \nvar Module " << Cmd01 << "\ncompile Module"
-                   << "\n";
-            myfile.close();
-            //create files and folders for dir
-
-            /*
-        
-        
-        */
-        }
         else if (strcmp(getcurrentIns().c_str(), "end;") == 0)
         {
             return charstr;
@@ -559,43 +526,6 @@ int Argser::Parse()
                 charstr++;
             }
         }
-        /*else if (strcmp(getVar(getcurrentIns()).c_str(), getcurrentIns().c_str()))
-        {
-            
-            cout <<GREEN<< getVar(getcurrentIns())<<RESET << endl;
-        }*/
-        else if (strcmp(getcurrentIns().c_str(), "func") == 0)
-        {
-        }
-        else if (strcmp(getcurrentIns().c_str(), "call") == 0)
-        {
-        }
-        else if (strcmp(getcurrentIns().c_str(), "") == 0)
-        {
-        }
-        /*else if (first_ins==1){
-            vector<string> CS;
-            CS.push_back("Private/");
-            CS.push_back("scripts/");
-
-            //cout<<CS[1]<<endl;
-            for (int i=0; i<CS.size()-1;i++){
-                vector<string> CMDS;
-                CMDS=list_dir(CS[i]);
-
-                
-                for(int j=0;j<CMDS.size()-1;i++){
-                    cout<<CMDS[i]<<endl;
-                    if(strcmp(CMDS[j].c_str(),this->getnextIns().c_str())==0){
-                        string CMD;
-                        cout<<"EXE:"<<endl;
-                        CMD.append("./QSR.E -QF ").append(CS[i]).append("/");
-                        CMD.append(getcurrentIns().c_str());
-                        system(CMD.c_str());
-                    }
-                }
-            }
-        }*/
         else
         {
             bool isexist = 0;
@@ -609,7 +539,7 @@ int Argser::Parse()
             }
             if (isexist == 0)
             {
-                cout << "Unknown Instruction: \"" << getcurrentIns() << "\"  at: " << GetInsL(charstr) << ":" << charstr << endl;
+                cout <<RED<< "Unknown Instruction: \"" << getcurrentIns() << "\"  at: " << GetInsL(charstr) << ":" << charstr<<RESET << endl;
             }
         }
         first_ins = 0;
@@ -721,15 +651,19 @@ void *HelperI(Argser *TLM)
 int Argser::init_Func()
 {
     //&Compile;
-    add_Cask("compile", "Build+run", &Compile);
-    add_Cask("link", "Link", &Link);
+    add_Cask("compile", "[Compilable_Module]", &Compile);
+    add_Cask("link", "Link all objs together", &Link);
     add_Cask("App-RCP", "Recompile app from local source", &Update);
     add_Cask("App-RUP", "Update from master-Github and recompile", &Update);
-    add_Cask("run", "Update from master-Github and recompile", &Run);
+    add_Cask("run", "run exe file in build/exe", &Run);
     add_Cask("import", "import [Module], note those are c++ import", &import_Module);
     add_Cask("var", "[Varname] [Value], note those are Strings", &Var);
     add_Cask("func", "[Fname] as begin: {Code} end; create new function", &func);
     add_Cask("call", "[Func]", &Call);
+    add_Cask("exit", "exit Programme", &Exit);
+    add_Cask("add", "add [Compilable_Module]", &add);
+    add_Cask("init", "init Project", &Init);
+    add_Cask("-QF", "Run Qf Script", &QF);
     add_Cask("-help", "[module]", &HelperI);
 
     Init_Modules(this);
