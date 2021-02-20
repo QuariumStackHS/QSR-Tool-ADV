@@ -3,4 +3,5 @@ Begin:
 -help Ads
 -help Dumper
 -help Generator
+-help Math
 end;

@@ -1,18 +1,24 @@
 Begin:
 
+import Math
+
+string name "lol tes drole toi"
 
 /* update App */
 func update as:
     App-RCP
 end;
+
 /* Generate Apps */
 func Gen_Apps as:
-    import Generator
+    import module
     Gen_Help
 end;
 
-
+var module Generator ;
 call update
 
-call Gen_Apps
-exit
+call Gen_Apps 
+exit 
+
+end; 

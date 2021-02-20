@@ -6,7 +6,7 @@
 
 
 //user definable Function
-
+/*
 class Value{
     public:
         Value(string value){
@@ -26,7 +26,56 @@ class Value{
     int I_V;
     float F_V;
     
-    };
+    };*/
+class Value
+{
+public:
+    Value(string Name, string Value);
+    int I_value;
+    float F_value;
+    string S_value;
+    string v_Name;
+
+};
+ 
+Value::Value(string Name, string Value){
+    //this->F_value= stof(Value);
+
+    std::string s = Value;
+ 
+    try
+    {
+        int i = std::stoi(s);
+        this->I_value=i;
+        std::cout << i << '\n';
+    }
+    catch (std::invalid_argument const &e)
+    {
+        std::cout << "Bad input: std::invalid_argument thrown" << '\n';
+    }
+    catch (std::out_of_range const &e)
+    {
+        std::cout << "Integer overflow: std::out_of_range thrown" << '\n';
+    }
+    try
+    {
+        float i = std::stof(s);
+        this->F_value=i;
+        std::cout << i << '\n';
+    }
+    catch (std::invalid_argument const &e)
+    {
+        //std::cout << "Bad input: std::invalid_argument thrown" << '\n';
+    }
+    catch (std::out_of_range const &e)
+    {
+        std::cout << "Float overflow: std::out_of_range thrown" << '\n';
+    }
+    //this->I_value= stoi(Value.c_str());
+    this->S_value=Value;
+    this-> v_Name=Name;
+
+}
 class UD_Function{
     public:
         UD_Function(string Fname,int Bl,int El){
@@ -50,7 +99,7 @@ vector<UD_Function>Functions;
 int StackPointer=0;
 Argser(int argc, char **argv)
 {
-    
+    //this->LastMathValue=;
     this->argc = argc;
     for (int i = 0; i < argc; i++)
     {
@@ -155,6 +204,11 @@ Argser(int argc, char **argv)
                 Tadr(this);
                 return 1;
             }
+            for(int i=0;i<this->Math_Var.size();i++){
+                if(strcmp(this->Math_Var[i].v_Name.c_str(),tname.c_str())==0){
+                    return 1;
+                }
+            }
         }
         return 0;
     }
@@ -179,6 +233,8 @@ Argser(int argc, char **argv)
         int (Argser::*CPP_Addr)();
         string Fname;
     };
+    int DBuf;
+    Value LastMathValue=Value("Null","Null");
     string getcurrentIns();
     int edit(string);
     int varsN = 0;
@@ -190,6 +246,7 @@ Argser(int argc, char **argv)
     int newFunc(string, int,int);
     int import();
     string getnextIns();
+    vector<Value> Math_Var;
     vector<string> vars;
     vector<Fnc> Fncs;
 

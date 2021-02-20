@@ -545,6 +545,13 @@ int Argser::Parse()
                 cout <<RED<< "Unknown Instruction: \"" << getcurrentIns() << "\"  at: " << GetInsL(charstr) << ":" << charstr<<RESET << endl;
             }
         }
+        if(this->DBuf==0){
+            return 0;
+        }        
+        if(this->DBuf!=0){
+            DBuf--;
+        }
+        
         first_ins = 0;
         //cout<<getVar(getcurrentIns())<<endl;
         //cout<<"isvar??"<<getcurrentIns()<<"->"<<(strcmp(getVar(getcurrentIns()).c_str(),"Null") == 1)<<endl;
@@ -589,10 +596,12 @@ void *Var(Argser *IN)
 
     //IN->charstr++;
     int VarI = IN->charstr + 1;
-    IN->newVar(IN->getnextIns(), IN->argv[VarI + 1]);
+    string VarName =IN->getnextIns();
+    string Var_Value=IN->getnextIns();
+    IN->newVar(VarName,Var_Value );
     if (IN->Cfg.debug)
     {
-        cout << "DEBUG: new variable named: \"" << IN->getcurrentIns() << "\" with value: " << IN->argv[VarI + 1] << endl;
+        cout << "DEBUG: new variable named: \"" << VarName << "\" with value: " << Var_Value << endl;
         //if()
     }
     IN->charstr++;
@@ -602,7 +611,7 @@ void *Export(Argser *IN)
 }
 void *import_Module(Argser *IN)
 {
-    string N = IN->getnextIns();
+    string N =IN->getVar(IN->getnextIns());
     int didran=0;
     //cout << N << endl;
     for (int i = 0; i < IN->QS.size(); i++)
