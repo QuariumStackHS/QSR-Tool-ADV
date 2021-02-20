@@ -354,7 +354,7 @@ void *Update(Argser *IN)
 
     else if ((strcmp(IN->getcurrentIns().c_str(), "App-RUP") == 0))
     {
-        system("git clone https://github.com/QuariumStackHS/QSR-Tool ");
+        system("git clone https://github.com/QuariumStackHS/QSR-Tool-ADV ");
         int i = system("g++ QSR-Tool/QSR/main.cpp -std=c++17 -o QSR.E");
         cout << "\nRecompiling QSR:" << endl;
         cout << "\tUpdating configuration.." << endl;
